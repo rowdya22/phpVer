@@ -254,7 +254,8 @@ phpver 7
 esac
 }
 
-echo "
-phpver injected into shell. For information and examples, run 'phpver' 
-"
+#echo "
+#phpver injected into shell. For information and examples, run 'phpver' 
+#"
+phpver
 
