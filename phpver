@@ -1,0 +1,264 @@
+#!/bin/bash
+
+### wanna basically run this remotely, add an argument and check to see if there isn't an argument
+### check whilst I'm at it I can have each case modify the .htaccess for me
+
+## where did I get these?
+ini52="/etc/php.ini"
+ini54="/usr/php/54/etc/php.ini"
+ini56="/usr/php/56/etc/php.ini"
+ini70="/opt/php70/lib/php.ini"
+
+extras52="extension=http.so
+extension=magickwand.so
+extension=mailparse.so
+extension=oauth.so
+extension=oci8.so
+extension=uploadprogress.so
+zend_extension=/usr/lib64/php/modules/ioncube_loader_lin.so
+zend_extension=/usr/lib64/php/modules/ixed.lin
+zend_extension=/usr/lib64/php/modules/ZendOptimizer.so
+"
+
+#PHP 5.4 - Http, MagickWand, Mailparse, OAuth, Oci8, Upload Progress, Ioncube, SourceGuardian
+extras54="zend_loader.disable_licensing=0
+extension=http.so
+extension=magickwand.so
+extension=mailparse.so
+extension=oauth.so
+extension=oci8.so
+extension=uploadprogress.so
+zend_extension=/usr/php/54/usr/lib64/php/modules/ioncube_loader_lin.so
+zend_extension=/usr/php/54/usr/lib64/php/modules/ixed.lin
+zend_extension=/usr/php/54/usr/lib64/php/modules/ZendGuardLoader.so
+"
+
+#PHP 5.6 - MagickWand, Mailparse, OAuth, Oci8, Upload Progress, Ioncube, SourceGuardian
+extras56="extension=imagick.so
+
+extension=pdo_mysql.so
+extension=pdo_sqlite.so
+extension=pdo_pgsql.so
+
+zend_loader.disable_licensing=0
+extension=magickwand.so
+extension=mailparse.so
+extension=oauth.so
+extension=oci8.so
+extension=uploadprogress.so
+zend_extension=/usr/php/56/usr/lib64/php/modules/ioncube_loader_lin.so
+zend_extension=/usr/php/56/usr/lib64/php/modules/ixed.lin
+zend_extension=/usr/php/56/usr/lib64/php/modules/ZendGuardLoader.so
+zend_extension=/usr/php/56/usr/lib64/php/modules/opcache.so
+"
+
+#PHP 7.0 - MagickWand, Mailparse, OAuth, Upload Progress, Ioncube
+extras70="extension=mailparse.so
+extension=uploadprogress.so
+extension=imagick.so
+extension=magickwand.so
+extension=oauth.so
+zend_extension=/opt/ioncube/ioncube_loader_lin_7.0.so
+zend_extension=/opt/php70/lib/php/extensions/no-debug-non-zts-20151012/opcache.so
+"
+
+
+handler52="AddHandler application/x-httpd-php5 .php"
+handler52f="AddHandler fcgid-script .php"
+handler52s="AddHandler application/x-httpd-php5s .php"
+
+handler54="AddHandler application/x-httpd-php54 .php"
+handler54f="AddHandler fcgid54-script .php" 
+handler54s="AddHandler application/x-httpd-php54s .php"
+
+handler56="AddHandler application/x-httpd-php56 .php"
+handler56f="AddHandler fcgid56-script .php" 
+handler56s="AddHandler application/x-httpd-php56s .php" 
+
+handler70="AddHandler application/x-httpd-php70 .php"
+handler70f="AddHandler application/x-httpd-php70f .php"
+handler70s="AddHandler application/x-httpd-php70s .php"
+
+replacestring="^\s*[^#]\?\s*AddHandler.*.php" # only replace AddHandler.*.php lines that aren't commented
+
+backupext=".bak___phpver___"
+
+function ckfiles () {
+
+    # if there's an .htaccess and no backup, back it up. Otherwise create a new .htaccess 
+	if [[ -f .htaccess ]]; then
+        if [[ ! -f .htaccess$backupext ]]; then
+            echo "No .htaccess backup present, attempting to back up now"
+            cat .htaccess > .htaccess$backupext
+        fi
+    else
+        echo "No .htaccess file, adding one now..."
+        echo "" >> .htaccess
+    fi
+
+
+    # Check .htaccess for an AddHandler line. If there isn't one the rest of the script won't work. Add one.
+    # note the use of $handler52 is not indicating that I'm switching to 5.2, it's just a dummy line for later 
+    if [[ ! -n `egrep ^\s*[^#]?\s*AddHandler.*.php .htaccess` ]]; then
+    	echo "No AddHandler for php in .htaccess, adding now..."
+    	cat .htaccess > .htaccess.tmp && echo "$handler52" > .htaccess && cat .htaccess.tmp >> .htaccess && rm -f .htaccess.tmp	
+    fi
+
+    #If there's a php.ini but no backup, go ahead and back up. Otherwise forget about it. 
+	if [[ -f php.ini && ! -f php.ini$backupext ]]; then
+
+        echo "No php.ini backup present, attempting to back up now..."
+        cat php.ini > php.ini$backupext
+    
+    fi
+
+}
+
+phpver () {
+case "$1" in
+2)  
+    echo "Switching to php 5.2..."
+    ckfiles
+    grep -v zend_extension $ini52 > php.ini && echo "$extras52" >> php.ini
+    sed -i "s|$replacestring|$handler52|" .htaccess 	
+    echo "Done."
+    ;;
+
+2f) 
+    echo "Switching to php 5.2 (fcgi)..."
+    ckfiles
+    grep -v zend_extension $ini52 > php.ini && echo "$extras52" >> php.ini
+    sed -i "s|$replacestring|$handler52f|" .htaccess
+    echo "Done."
+    ;;
+     
+2s) 
+    echo "Switching to php 5.2 (single)..."
+    ckfiles
+    grep -v zend_extension $ini52 > php.ini && echo "$extras52" >> php.ini
+    sed -i "s|$replacestring|$handler52s|" .htaccess
+    echo "Done."
+    ;;
+
+4) 
+    echo "Switching to php 5.4..."
+    ckfiles
+    cp $ini54 php.ini 
+    sed -i "s|$replacestring|$handler54|" .htaccess
+    echo "Done."
+    ;;
+
+4f) 
+    echo "Switching to php 5.4 (fcgi)..."
+    ckfiles
+    cp $ini54 php.ini 
+    sed -i "s|$replacestring|$handler54f|" .htaccess
+    echo "Done."
+    ;;
+     
+4s) 
+    echo "Switching to php 5.4 (single)..."
+    ckfiles
+    cp $ini54 php.ini  
+    sed -i "s|$replacestring|$handler54s|" .htaccess
+    echo "Done."
+    ;;
+
+6) 
+    echo "Switching to php 5.6..."
+    ckfiles
+    cp $ini56 php.ini  
+    sed -i "s|$replacestring|$handler56|" .htaccess
+    echo "Done."
+    ;;
+
+6f) 
+    echo "Switching to php 5.6 (fcgi)..."
+    ckfiles
+    cp $ini56 php.ini 
+    sed -i "s|$replacestring|$handler56f|" .htaccess
+    echo "Done."
+    ;;
+     
+6s) 
+    echo "Switching to php 5.6 (single)..."
+    ckfiles
+    cp $ini56 php.ini 
+    sed -i "s|$replacestring|$handler56s|" .htaccess
+    echo "Done."
+    ;;
+
+7)
+    echo "Switching to php 7.0..."
+    ckfiles
+    cp $ini70 php.ini
+    sed -i "s|$replacestring|$handler70|" .htaccess
+    echo "Done."
+    ;;
+
+7f)
+    echo "Switching to php 7.0 (fcgi)..."
+    ckfiles
+    cp $ini70 php.ini
+    sed -i "s|$replacestring|$handler70f|" .htaccess
+    echo "Done."
+    ;;  
+
+7s) 
+    echo "Switching to php 7.0 (single)..."
+    ckfiles
+    cp $ini70 php.ini
+    sed -i "s|$replacestring|$handler70s|" .htaccess
+    echo "Done."
+    ;;
+
+--restore) echo "restoring"
+	rm .htaccess php.ini
+	mv .htaccess$backupext .htaccess
+	mv php.ini$backupext php.ini
+	echo "restore complete"
+	;;
+
+
+*) clear && echo "
+This script does the following:
+-Check for backups of original .htaccess and php.ini. If none, creates them as {}$backupext
+-If {}$backupext already exists it won't attempt to overwrite.
+-Check for presence of .htaccess. If none, creates it. 
+-Check for AddHandler.*.php in .htaccess. if none, adds default 5.2
+-Replaces AddHandler.*.php in .htaccess with appropriate version, AND provides new php.ini appropriate for that version. 
+
+Note that although php 5.2 is present in the script doesn't mean the server can support 5.2
+
+**EVEN THOUGH THIS ATTEMPTS BACKUPS**
+**MAKE A BACKUP YOURSELF. YOU'VE BEEN WARNED**
+
+Valid arguments:
+2  - php 5.2
+2f - php 5.2 fcgi
+2s - php 5.2 single
+4  - php 5.4
+4f - php 5.4 fcgi
+4s - php 5.4 single
+6  - php 5.6
+6f - php 5.6 fcgi
+6s - php 5.6 single
+7  - php 7.0
+7f - php 7.0 fcgi
+7s - php 7.0 single
+
+
+--restore - deletes the current .htaccess, php.ini and moves the $backupext ones into place
+
+phpver 7
+^^ changes the current directory and down to use php7.0
+
+"
+;;
+esac
+}
+
+echo "
+phpver injected into shell. For information and examples, run 'phpver' 
+"
+
