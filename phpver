@@ -112,7 +112,7 @@ function ckfiles () {
 
 phpver () {
 case "$1" in
-2)  
+52)  
     echo "Switching to php 5.2..."
     ckfiles
     grep -v zend_extension $ini52 > php.ini && echo "$extras52" >> php.ini
@@ -120,7 +120,7 @@ case "$1" in
     echo "Done."
     ;;
 
-2f) 
+52f) 
     echo "Switching to php 5.2 (fcgi)..."
     ckfiles
     grep -v zend_extension $ini52 > php.ini && echo "$extras52" >> php.ini
@@ -128,7 +128,7 @@ case "$1" in
     echo "Done."
     ;;
      
-2s) 
+52s) 
     echo "Switching to php 5.2 (single)..."
     ckfiles
     grep -v zend_extension $ini52 > php.ini && echo "$extras52" >> php.ini
@@ -136,7 +136,7 @@ case "$1" in
     echo "Done."
     ;;
 
-4) 
+54) 
     echo "Switching to php 5.4..."
     ckfiles
     cp $ini54 php.ini 
@@ -144,7 +144,7 @@ case "$1" in
     echo "Done."
     ;;
 
-4f) 
+54f) 
     echo "Switching to php 5.4 (fcgi)..."
     ckfiles
     cp $ini54 php.ini 
@@ -152,7 +152,7 @@ case "$1" in
     echo "Done."
     ;;
      
-4s) 
+54s) 
     echo "Switching to php 5.4 (single)..."
     ckfiles
     cp $ini54 php.ini  
@@ -160,7 +160,7 @@ case "$1" in
     echo "Done."
     ;;
 
-6) 
+56) 
     echo "Switching to php 5.6..."
     ckfiles
     cp $ini56 php.ini  
@@ -168,7 +168,7 @@ case "$1" in
     echo "Done."
     ;;
 
-6f) 
+56f) 
     echo "Switching to php 5.6 (fcgi)..."
     ckfiles
     cp $ini56 php.ini 
@@ -176,7 +176,7 @@ case "$1" in
     echo "Done."
     ;;
      
-6s) 
+56s) 
     echo "Switching to php 5.6 (single)..."
     ckfiles
     cp $ini56 php.ini 
@@ -184,7 +184,7 @@ case "$1" in
     echo "Done."
     ;;
 
-7)
+70)
     echo "Switching to php 7.0..."
     ckfiles
     cp $ini70 php.ini
@@ -192,7 +192,7 @@ case "$1" in
     echo "Done."
     ;;
 
-7f)
+70f)
     echo "Switching to php 7.0 (fcgi)..."
     ckfiles
     cp $ini70 php.ini
@@ -200,7 +200,7 @@ case "$1" in
     echo "Done."
     ;;  
 
-7s) 
+70s) 
     echo "Switching to php 7.0 (single)..."
     ckfiles
     cp $ini70 php.ini
@@ -230,32 +230,30 @@ Note that although php 5.2 is present in the script doesn't mean the server can 
 **MAKE A BACKUP YOURSELF. YOU'VE BEEN WARNED**
 
 Valid arguments:
-2  - php 5.2
-2f - php 5.2 fcgi
-2s - php 5.2 single
-4  - php 5.4
-4f - php 5.4 fcgi
-4s - php 5.4 single
-6  - php 5.6
-6f - php 5.6 fcgi
-6s - php 5.6 single
-7  - php 7.0
-7f - php 7.0 fcgi
-7s - php 7.0 single
+52  - php 5.2
+52f - php 5.2 fcgi
+52s - php 5.2 single
+54  - php 5.4
+54f - php 5.4 fcgi
+54s - php 5.4 single
+56  - php 5.6
+56f - php 5.6 fcgi
+56s - php 5.6 single
+70  - php 7.0
+70f - php 7.0 fcgi
+70s - php 7.0 single
 
 
 --restore - deletes the current .htaccess, php.ini and moves the $backupext ones into place
 
-phpver 7
-^^ changes the current directory and down to use php7.0
+phpver 70
+^^ changes the current directory and down to use php 7.0
 
 "
 ;;
 esac
 }
 
-#echo "
-#phpver injected into shell. For information and examples, run 'phpver' 
-#"
-phpver
-
+echo "
+phpver injected into shell. For information and examples, run 'phpver' 
+"
