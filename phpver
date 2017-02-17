@@ -117,6 +117,9 @@ case "$1" in
     ckfiles
     grep -v zend_extension $ini52 > php.ini && echo "$extras52" >> php.ini
     sed -i "s|$replacestring|$handler52|" .htaccess 	
+    if [ -f wp-content/mu-plugins/endurance-php-edge.php ]; then
+	wp option update epe_php_handler application/x-httpd-php52
+    fi
     echo "Done."
     ;;
 
@@ -133,6 +136,9 @@ case "$1" in
     ckfiles
     grep -v zend_extension $ini52 > php.ini && echo "$extras52" >> php.ini
     sed -i "s|$replacestring|$handler52s|" .htaccess
+    if [ -f wp-content/mu-plugins/endurance-php-edge.php ]; then
+        wp option update epe_php_handler application/x-httpd-php52s
+    fi
     echo "Done."
     ;;
 
@@ -141,6 +147,10 @@ case "$1" in
     ckfiles
     cp $ini54 php.ini 
     sed -i "s|$replacestring|$handler54|" .htaccess
+    if [ -f wp-content/mu-plugins/endurance-php-edge.php ]; then
+        wp option update epe_php_handler application/x-httpd-php54
+    fi
+
     echo "Done."
     ;;
 
@@ -157,6 +167,9 @@ case "$1" in
     ckfiles
     cp $ini54 php.ini  
     sed -i "s|$replacestring|$handler54s|" .htaccess
+    if [ -f wp-content/mu-plugins/endurance-php-edge.php ]; then
+        wp option update epe_php_handler application/x-httpd-php54s
+    fi
     echo "Done."
     ;;
 
@@ -165,6 +178,9 @@ case "$1" in
     ckfiles
     cp $ini56 php.ini  
     sed -i "s|$replacestring|$handler56|" .htaccess
+    if [ -f wp-content/mu-plugins/endurance-php-edge.php ]; then
+        wp option update epe_php_handler application/x-httpd-php56
+    fi
     echo "Done."
     ;;
 
@@ -181,6 +197,9 @@ case "$1" in
     ckfiles
     cp $ini56 php.ini 
     sed -i "s|$replacestring|$handler56s|" .htaccess
+    if [ -f wp-content/mu-plugins/endurance-php-edge.php ]; then
+        wp option update epe_php_handler application/x-httpd-php56s
+    fi
     echo "Done."
     ;;
 
@@ -189,6 +208,9 @@ case "$1" in
     ckfiles
     cp $ini70 php.ini
     sed -i "s|$replacestring|$handler70|" .htaccess
+    if [ -f wp-content/mu-plugins/endurance-php-edge.php ]; then
+        wp option update epe_php_handler application/x-httpd-php70
+    fi
     echo "Done."
     ;;
 
@@ -205,6 +227,9 @@ case "$1" in
     ckfiles
     cp $ini70 php.ini
     sed -i "s|$replacestring|$handler70s|" .htaccess
+    if [ -f wp-content/mu-plugins/endurance-php-edge.php ]; then
+        wp option update epe_php_handler application/x-httpd-php70s
+    fi
     echo "Done."
     ;;
 
@@ -212,6 +237,9 @@ case "$1" in
 	rm .htaccess php.ini
 	mv .htaccess$backupext .htaccess
 	mv php.ini$backupext php.ini
+	if [ -f wp-content/mu-plugins/endurance-php-edge.php ]; then
+       		wp option delete epe_php_handler
+	fi
 	echo "restore complete"
 	;;
 
